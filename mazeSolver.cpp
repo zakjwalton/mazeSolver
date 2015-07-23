@@ -116,5 +116,6 @@ int dynamicProgrammingMazeSolver(int i, int j)
 int randomizedMazeSolver(int i, int j)
 {
     //algorithm goes here
+    //Zak sucks dick
     return -1;
 }
