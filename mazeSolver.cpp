@@ -28,7 +28,7 @@ int main()
 {
 	//required variables
 	ifstream in;
-	in.open("sample_mazes/CSSmaze2.txt");
+	in.open("sample_mazes/etikilam_2.txt");
 	char line;
 	
 	//read the matrix using plain c code, character by character
