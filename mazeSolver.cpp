@@ -8,6 +8,7 @@
 
 using namespace std;
 
+
 int bruteForceMazeSolver(int i, int j);
 int backtrackingMazeSolver(int i, int j);
 int greedyMazeSolver(int i, int j);
@@ -39,6 +40,15 @@ struct maze
 };
 
 maze myMaze;
+
+double getUnixTime(void)
+{
+    struct timespec tv;
+
+    if(clock_gettime(CLOCK_REALTIME, &tv) != 0) return 0;
+
+    return (((double) tv.tv_sec) + (double) (tv.tv_nsec / 1000000000.0));
+}
 
 int main()
 {
@@ -74,17 +84,24 @@ int main()
 	int x=1,y=1;
 
 	//Find starting coordinates
-	for(int i=0; i<myMaze.rows; i++)
-		for(int j=0; j<myMaze.cols; j++)
+	for(int i=0; i<myMaze.rows; i++){
+		for(int j=0; j<myMaze.cols; j++){
 			if( myMaze.matrix[i][j] == 'S' ){
 				x=j;
 				y=i;
 			}
+		}	
+	}
 
 	//Call a recursive mazeSolver
 
+	double bfStart = getUnixTime();
 	int bfDistance = bruteForceMazeSolver(x,y);
+	double bfStop = getUnixTime();
+	cout << bfStart << "  " << bfStop << endl<< endl;
+	double bfTime = bfStop-bfStart; // CLOCKS_PER_SEC * 1000.0;
 	cout << "Brute force distance: " << bfDistance << " units away!" << endl << endl;
+	cout << "Brute force time: " << bfTime << " ms" << endl << endl;
 
 	//Print Brute Force Maze
 	for(int i=0; i<myMaze.rows; i++)
@@ -94,9 +111,12 @@ int main()
 		cout << endl;
 	}
 
-	
+	clock_t rStart = clock();
 	int rDistance = randomizedMazeSolver(x,y);
+	clock_t rStop = clock();
+	double rTime = (double) (rStop-rStart) / CLOCKS_PER_SEC * 1000.0;
 	cout << "Randomized distance: " << rDistance << " units away!" << endl;
+	cout << "Randomized time: " << bfTime << " ms" << endl << endl;
 
 
 	//Print solved random maze
