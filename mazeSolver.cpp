@@ -15,18 +15,21 @@ int divideAndConquerMazeSolver(int i, int j);
 int dynamicProgrammingMazeSolver(int i, int j);
 int randomizedMazeSolver(int i, int j);
 
+enum Dir {RIGHT = 0,LEFT = 1,UP = 2,DOWN = 3};
+
 class Coord{
 	int xpos, ypos;
+	Dir dir;
 public:
-	Coord(int x, int y){xpos = x; ypos = y;}
+	Coord(int x, int y, Dir d){xpos = x; ypos = y; dir = d;}
 	int getX(){return xpos;}
 	int getY(){return ypos;}
+	Dir getDir(){return dir;}
 	void setX(int x){xpos = x;}
 	void setY(int y){ypos = y;}
+	void setDir(Dir d){dir = d;}
 	void setCoord(int x, int y){ xpos = x; ypos = y;}
 };
-
-enum Dir {RIGHT = 0,LEFT = 1,UP = 2,DOWN = 3};
 
 struct maze
 {
@@ -41,7 +44,7 @@ int main()
 {
 	//required variables
 	ifstream in;
-	in.open("sample_mazes/maze.txt");
+	in.open("sample_mazes/SPFmaze2.txt");
 	char line;
 
 	//read the matrix using plain c code, character by character
@@ -79,6 +82,7 @@ int main()
 			}
 
 	//Call a recursive mazeSolver
+
 	int bfDistance = bruteForceMazeSolver(x,y);
 		cout << "Brute force distance: " << bfDistance << " units away!" << endl << endl;
 	for(int i=0; i<myMaze.rows; i++)
@@ -102,6 +106,21 @@ int main()
 	//cout << "Divide and conquer distance: " << dncDistance << " units away!" << endl;
 	//cout << "Dynamic programming distance: " << dpDistance << " units away!" << endl;
 	cout << "Randomized distance: " << rDistance << " units away!" << endl << endl;
+
+	//int bfDistance = bruteForceMazeSolver(x,y);
+	int btDistance = backtrackingMazeSolver(x,y);
+	int gDistance = greedyMazeSolver(x,y);
+	int dncDistance = divideAndConquerMazeSolver(x,y);
+	int dpDistance = dynamicProgrammingMazeSolver(x,y);
+	int rDistance = randomizedMazeSolver(x,y);
+
+	//cout << "Brute force distance: " << bfDistance << " units away!" << endl;
+	cout << "Backtracking distance: " << btDistance << " units away!" << endl;
+	cout << "Greedy distance: " << gDistance << " units away!" << endl;
+	cout << "Divide and conquer distance: " << dncDistance << " units away!" << endl;
+	cout << "Dynamic programming distance: " << dpDistance << " units away!" << endl;
+	cout << "Randomized distance: " << rDistance << " units away!" << endl;
+
 
 	//Print solved maze
 	for(int i=0; i<myMaze.rows; i++)
@@ -251,6 +270,7 @@ int bruteForceMazeSolver(int i, int j)
     		}
     	}
 
+
     return distance;    
 }
 int backtrackingMazeSolver(int i, int j)
@@ -291,19 +311,21 @@ int randomizedMazeSolver(int j, int i)
 		stack<Coord> coordStack;
 		bool first = true;
 		Dir dir = DOWN;
+		Dir oldDir = DOWN;
 		srand(time(NULL));
-		cout << "starting shit" << endl << endl;
 
+		//Loop until we find the finish
 		while(myMaze.matrix[y][x] != 'F'){
-			//cout << endl << "X = " << coordStack.top().getX() << "  Y = " << coordStack.top().getY() << endl;
+			//Remove top element from stack if backtracking
+			if(!first){
+				if((coordStack.top().getX() == x) && (coordStack.top().getY() == y)){
+					coordStack.pop();
+				}
+			}
+			//If it is first iteration or we somehow get back to starting point
 			if(coordStack.empty()){
-				coordStack.push(Coord(x,y));
 				first = true;
 			}
-			if((coordStack.top().getX() == x) && (coordStack.top().getY() == y) && !first){
-				coordStack.pop();
-			}
-
 
 			//Calculate the number of openings
 			openings = 0;
@@ -316,8 +338,10 @@ int randomizedMazeSolver(int j, int i)
 			if(myMaze.matrix[y-1][x] != '*')
 				openings++;
 
-			//Figure out how to move
-			if(openings == 3){
+			//First time through case.. at starting point
+			if(first){
+				first = false;
+				//Randomly find valid direction
 				while(true){
 					dir = static_cast<Dir>(rand() % 4);
 					if(dir == RIGHT){
@@ -329,99 +353,170 @@ int randomizedMazeSolver(int j, int i)
 							break;
 					}
 					if(dir == UP){
-						if(myMaze.matrix[y+1][x] != '*')
-							break;
-					}
-					if(dir == DOWN){
 						if(myMaze.matrix[y-1][x] != '*')
 							break;
 					}
+					if(dir == DOWN){
+						if(myMaze.matrix[y+1][x] != '*')
+							break;
+					}
 				}
+				//Move selected direction
 				switch(dir){
 					case(RIGHT):
-						if(!coordStack.empty())
-							if(coordStack.top().getX() != x+1 || coordStack.top().getY() != y){
-								coordStack.push(Coord(x,y));
-							}
+						coordStack.push(Coord(x,y,RIGHT));
 						x++;
+						oldDir = RIGHT;
 						break;
 					case(LEFT):
-						if(!coordStack.empty())
-							if(coordStack.top().getX() != x-1 || coordStack.top().getY() != y){
-								coordStack.push(Coord(x,y));
-							}
+						coordStack.push(Coord(x,y,LEFT));
 						x--;
+						oldDir = LEFT;
 						break;
 					case(UP):
-						if(!coordStack.empty())
-							if(coordStack.top().getX() != x || coordStack.top().getY() != y+1){
-								coordStack.push(Coord(x,y));
-							}
-						y++;
+						coordStack.push(Coord(x,y,RIGHT));
+						y--;
+						oldDir = UP;
 						break;
 					case(DOWN):
-						if(!coordStack.empty())
-							if(coordStack.top().getX() != x || coordStack.top().getY() != y-1){
-								coordStack.push(Coord(x,y));
-							}
-						y--;
+						coordStack.push(Coord(x,y,RIGHT));
+						y++;
+						oldDir = DOWN;
 						break;
 				}
+			//Case where there are three openings, need to chose
+			} else if(openings == 3){
+				//find valid direciton
+				while(true){
+					dir = static_cast<Dir>(rand() % 4);
+					if(dir == RIGHT){
+						if(myMaze.matrix[y][x+1] != '*')
+							break;
+					}
+					if(dir == LEFT){
+						if(myMaze.matrix[y][x-1] != '*')
+							break;
+					}
+					if(dir == UP){
+						if(myMaze.matrix[y-1][x] != '*')
+							break;
+					}
+					if(dir == DOWN){
+						if(myMaze.matrix[y+1][x] != '*')
+							break;
+					}
+				}
+				//move valid direction
+				switch(dir){
+					case(RIGHT):
+						if(coordStack.top().getX() != x+1 || coordStack.top().getY() != y)
+							coordStack.push(Coord(x,y,oldDir));
+						x++;
+						oldDir = RIGHT;
+						break;
+					case(LEFT):
+						if(coordStack.top().getX() != x-1 || coordStack.top().getY() != y){
+							coordStack.push(Coord(x,y,oldDir));
+						}
+						x--;
+						oldDir = LEFT;
+						break;
+					case(UP):
+						if(coordStack.top().getX() != x || coordStack.top().getY() != y-1){
+							coordStack.push(Coord(x,y,oldDir));
+						}
+						y--;
+						oldDir = UP;
+						break;
+					case(DOWN):
+						if(coordStack.top().getX() != x || coordStack.top().getY() != y+1){
+							coordStack.push(Coord(x,y,oldDir));
+						}
+						y++;
+						oldDir = DOWN;
+						break;
+				}
+			//either two or 4 openings, go straight if possible.  Otherwise Randomly
+			//chose next direction
 			}else if(dir == RIGHT){
 				if(myMaze.matrix[y][x+1] != '*'){
-					if(!coordStack.empty())
-						if(coordStack.top().getX() != x+1 || coordStack.top().getY() != y){
-							coordStack.push(Coord(x,y));
-						}
+					//Push last location
+					if(coordStack.top().getX() != x+1 || coordStack.top().getY() != y){
+						coordStack.push(Coord(x,y,oldDir));
+					}
 					x++;
+					oldDir = RIGHT;
 					first = false;
 				}else{
+					//Chose next direction
 					dir = static_cast<Dir>(rand() % 4);
 				}
 			}else if(dir == LEFT){
 				if(myMaze.matrix[y][x-1] != '*'){
-					if(!coordStack.empty())
-						if(coordStack.top().getX() != x-1 || coordStack.top().getY() != y){
-							coordStack.push(Coord(x,y));
-						}
+					//Push last location
+					if(coordStack.top().getX() != x-1 || coordStack.top().getY() != y){
+						coordStack.push(Coord(x,y,oldDir));
+					}
 					x--;
+					oldDir = LEFT;
 					first = false;
 				}else{
+					//chose next direction
 					dir = static_cast<Dir>(rand() % 4);
 				}
 			}else if(dir == UP){
-				if(myMaze.matrix[y+1][x] != '*'){
-					if(!coordStack.empty())
-						if(coordStack.top().getX() != x || coordStack.top().getY() != y+1){
-							coordStack.push(Coord(x,y));
-						}
-					y++;
+				if(myMaze.matrix[y-1][x] != '*'){
+					//Push last location
+					if(coordStack.top().getX() != x || coordStack.top().getY() != y-1){
+						coordStack.push(Coord(x,y,oldDir));
+					}
+					y--;
+					oldDir = UP;
 					first = false;
 				}else{
+					//chose next direction
 					dir = static_cast<Dir>(rand() % 4);
 				}
 			}else{
-				if(myMaze.matrix[y-1][x] != '*'){
-					if(!coordStack.empty())
-						if(coordStack.top().getX() != x || coordStack.top().getY() != y-1){
-							coordStack.push(Coord(x,y));
-						}
-					y--;
+				if(myMaze.matrix[y+1][x] != '*'){
+					//Push last location
+					if(coordStack.top().getX() != x || coordStack.top().getY() != y+1){
+						coordStack.push(Coord(x,y,oldDir));
+					}
+					y++;
+					oldDir = DOWN;
 					first = false;
 				}else{
+					//chose next direction
 					dir = static_cast<Dir>(rand() % 4);
 				}
 			}
 
 		}
 
-		int count = -1;
-		while (!coordStack.empty()){
-			count++;
-			if(myMaze.matrix[coordStack.top().getY()][coordStack.top().getX()] != 'S'){
-				myMaze.matrix[coordStack.top().getY()][coordStack.top().getX()] = '+';
-			}
+		//reverse stack so we print latest route last
+		stack<Coord> coordStack1;
+		while(!coordStack.empty()){
+			coordStack1.push(coordStack.top());
 			coordStack.pop();
+		}
+
+		//Fill up matrix with route, and count number of moves
+		int count = -1;
+		while (!coordStack1.empty()){
+			count++;
+			if(myMaze.matrix[coordStack1.top().getY()][coordStack1.top().getX()] != 'S'){
+				if(coordStack1.top().getDir() == RIGHT){
+					myMaze.matrix[coordStack1.top().getY()][coordStack1.top().getX()] = '>';
+				} else if(coordStack1.top().getDir() == LEFT){
+					myMaze.matrix[coordStack1.top().getY()][coordStack1.top().getX()] = '<';
+				}else if(coordStack1.top().getDir() == UP){
+					myMaze.matrix[coordStack1.top().getY()][coordStack1.top().getX()] = '^';
+				}else{
+					myMaze.matrix[coordStack1.top().getY()][coordStack1.top().getX()] = 'v';
+				}
+			}
+			coordStack1.pop();
 		}
     return count;
 }
