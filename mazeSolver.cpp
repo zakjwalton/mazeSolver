@@ -80,18 +80,28 @@ int main()
 
 	//Call a recursive mazeSolver
 	int bfDistance = bruteForceMazeSolver(x,y);
-	int btDistance = backtrackingMazeSolver(x,y);
-	int gDistance = greedyMazeSolver(x,y);
-	int dncDistance = divideAndConquerMazeSolver(x,y);
-	int dpDistance = dynamicProgrammingMazeSolver(x,y);
+		cout << "Brute force distance: " << bfDistance << " units away!" << endl << endl;
+	for(int i=0; i<myMaze.rows; i++)
+	{
+		for(int j=0; j<myMaze.cols; j++)
+			cout << myMaze.matrix[i][j];
+		cout << endl;
+	}
+
+	//int btDistance = backtrackingMazeSolver(x,y);
+	//int gDistance = greedyMazeSolver(x,y);
+	//int dncDistance = divideAndConquerMazeSolver(x,y);
+	//int dpDistance = dynamicProgrammingMazeSolver(x,y);
 	int rDistance = randomizedMazeSolver(x,y);
 
-	cout << "Brute force distance: " << bfDistance << " units away!" << endl;
-	cout << "Backtracking distance: " << btDistance << " units away!" << endl;
-	cout << "Greedy distance: " << gDistance << " units away!" << endl;
-	cout << "Divide and conquer distance: " << dncDistance << " units away!" << endl;
-	cout << "Dynamic programming distance: " << dpDistance << " units away!" << endl;
-	cout << "Randomized distance: " << rDistance << " units away!" << endl;
+
+
+
+	//cout << "Backtracking distance: " << btDistance << " units away!" << endl;
+	//cout << "Greedy distance: " << gDistance << " units away!" << endl;
+	//cout << "Divide and conquer distance: " << dncDistance << " units away!" << endl;
+	//cout << "Dynamic programming distance: " << dpDistance << " units away!" << endl;
+	cout << "Randomized distance: " << rDistance << " units away!" << endl << endl;
 
 	//Print solved maze
 	for(int i=0; i<myMaze.rows; i++)
@@ -108,9 +118,10 @@ int bruteForceMazeSolver(int i, int j)
 {
     cout << "in method" << endl;
 
-    int curr_x = i;
-    int curr_y = j;
+    int curr_x = j;
+    int curr_y = i;
     int count = 0;
+    int distance =0;
     stack<char> moves;
 
     while(myMaze.matrix[curr_x][curr_y] != 'F'){
@@ -119,8 +130,9 @@ int bruteForceMazeSolver(int i, int j)
 
     	//try going right
     	if(myMaze.matrix[curr_x][curr_y+1] == ' ' || myMaze.matrix[curr_x][curr_y+1] == 'F' ){
-    		cout << "right" << endl;
+    		//cout << "right" << endl;
     		count ++;
+    		distance++;
     		curr_y++;
     		if(myMaze.matrix[curr_x][curr_y] == 'F'){
     			break;
@@ -131,8 +143,9 @@ int bruteForceMazeSolver(int i, int j)
 
     	//try going up
     	else if(myMaze.matrix[curr_x-1][curr_y] == ' ' || myMaze.matrix[curr_x-1][curr_y] == 'F'){
-    		cout << "up" << endl;
+    		//cout << "up" << endl;
     		count++;
+    		distance++;
     		//break;
     		curr_x--;
     		if(myMaze.matrix[curr_x][curr_y] == 'F'){
@@ -144,8 +157,9 @@ int bruteForceMazeSolver(int i, int j)
 
     	//try going down
     	else if(myMaze.matrix[curr_x+1][curr_y] == ' ' || myMaze.matrix[curr_x+1][curr_y] == 'F'){
-    		cout << "down" << endl;
+    		//cout << "down" << endl;
     		count++;
+    		distance++;
     		curr_x++;
     		if(myMaze.matrix[curr_x][curr_y] == 'F'){
     			break;
@@ -158,7 +172,8 @@ int bruteForceMazeSolver(int i, int j)
     	//try going left
     	else if (myMaze.matrix[curr_x][curr_y-1] == ' ' || myMaze.matrix[curr_x][curr_y-1] == 'F'){
     		count++;
-    		cout << "left" << endl;
+    		distance++;
+    		//cout << "left" << endl;
     		//break;
     		curr_y--;
     		if(myMaze.matrix[curr_x][curr_y] == 'F'){
@@ -173,44 +188,48 @@ int bruteForceMazeSolver(int i, int j)
     	else if (moves.top() == 'l'){
     		moves.pop();
     		count++;
+    		distance--;
     		if(myMaze.matrix[curr_x][curr_y] != 'S'){
     			myMaze.matrix[curr_x][curr_y] = 'x';
     		}
     		curr_y++;
-    		cout << "backtracked right" << endl;
+    		//cout << "backtracked right" << endl;
     	}
 
     	//try backtracking up
     	else if (moves.top() == 'd'){
     		moves.pop();
     		count++;
+    		distance--;
     		if(myMaze.matrix[curr_x][curr_y] != 'S'){
     			myMaze.matrix[curr_x][curr_y] = 'x';
     		}
     		curr_x--;
-    		cout << "backtracked up" << endl;
+    		//cout << "backtracked up" << endl;
     	}
 
     	//try backtracking down
     	else if (moves.top() == 'u'){
     		moves.pop();
     		count++;
+    		distance--;
     		if(myMaze.matrix[curr_x][curr_y] != 'S'){
     			myMaze.matrix[curr_x][curr_y] = 'x';
     		}
     		curr_x++;
-    		cout << "backtracked down" << endl;
+    		//cout << "backtracked down" << endl;
     	}
 
     	//try backtracking left
     	else if (moves.top() == 'r'){
     		moves.pop();
     		count++;
+    		distance--;
     		if(myMaze.matrix[curr_x][curr_y] != 'S'){
     			myMaze.matrix[curr_x][curr_y] = 'x';
     		}
     		curr_y--;
-    		cout << "backtracked left" << endl;
+    		//cout << "backtracked left" << endl;
     	}
 
     	else{
@@ -218,9 +237,9 @@ int bruteForceMazeSolver(int i, int j)
     		break;
     	}
 
-    	/*if(count > 118){
+    	if(count > 500){
     		break;
-    	}*/
+    	}
     }
 
     //Clear X's
@@ -232,7 +251,7 @@ int bruteForceMazeSolver(int i, int j)
     		}
     	}
 
-    return -1;    
+    return distance;    
 }
 int backtrackingMazeSolver(int i, int j)
 {
@@ -256,6 +275,15 @@ int dynamicProgrammingMazeSolver(int i, int j)
 }
 int randomizedMazeSolver(int j, int i)
 {
+	//Clear o's
+    	for(int k=0; k<myMaze.rows; k++){
+    		for(int h=0; h<myMaze.cols; h++){
+    			if(myMaze.matrix[k][h] == 'o'){
+    				myMaze.matrix[k][h] = ' ';
+    			}
+    		}
+    	}
+
 		int x = j;
 		int y = i;
 		int u;
