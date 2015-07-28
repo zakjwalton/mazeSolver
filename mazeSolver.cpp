@@ -84,7 +84,9 @@ int main()
 	//Call a recursive mazeSolver
 
 	int bfDistance = bruteForceMazeSolver(x,y);
-		cout << "Brute force distance: " << bfDistance << " units away!" << endl << endl;
+	cout << "Brute force distance: " << bfDistance << " units away!" << endl << endl;
+
+	//Print Brute Force Maze
 	for(int i=0; i<myMaze.rows; i++)
 	{
 		for(int j=0; j<myMaze.cols; j++)
@@ -92,37 +94,12 @@ int main()
 		cout << endl;
 	}
 
-	//int btDistance = backtrackingMazeSolver(x,y);
-	//int gDistance = greedyMazeSolver(x,y);
-	//int dncDistance = divideAndConquerMazeSolver(x,y);
-	//int dpDistance = dynamicProgrammingMazeSolver(x,y);
+	
 	int rDistance = randomizedMazeSolver(x,y);
-
-
-
-
-	//cout << "Backtracking distance: " << btDistance << " units away!" << endl;
-	//cout << "Greedy distance: " << gDistance << " units away!" << endl;
-	//cout << "Divide and conquer distance: " << dncDistance << " units away!" << endl;
-	//cout << "Dynamic programming distance: " << dpDistance << " units away!" << endl;
-	cout << "Randomized distance: " << rDistance << " units away!" << endl << endl;
-
-	//int bfDistance = bruteForceMazeSolver(x,y);
-	int btDistance = backtrackingMazeSolver(x,y);
-	int gDistance = greedyMazeSolver(x,y);
-	int dncDistance = divideAndConquerMazeSolver(x,y);
-	int dpDistance = dynamicProgrammingMazeSolver(x,y);
-	int rDistance = randomizedMazeSolver(x,y);
-
-	//cout << "Brute force distance: " << bfDistance << " units away!" << endl;
-	cout << "Backtracking distance: " << btDistance << " units away!" << endl;
-	cout << "Greedy distance: " << gDistance << " units away!" << endl;
-	cout << "Divide and conquer distance: " << dncDistance << " units away!" << endl;
-	cout << "Dynamic programming distance: " << dpDistance << " units away!" << endl;
 	cout << "Randomized distance: " << rDistance << " units away!" << endl;
 
 
-	//Print solved maze
+	//Print solved random maze
 	for(int i=0; i<myMaze.rows; i++)
 	{
 		for(int j=0; j<myMaze.cols; j++)
@@ -135,7 +112,6 @@ int main()
 
 int bruteForceMazeSolver(int i, int j)
 {
-    cout << "in method" << endl;
 
     int curr_x = j;
     int curr_y = i;
