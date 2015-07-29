@@ -1,1 +1,101 @@
-This is the Documentation for cis263 project2, Maze Solver.
+*******************************************************************************
+mazeSolver.cpp
+Zak Walton and Nick Schrock
+cis263
+*******************************************************************************
+
+***Purpose***
+  The purpose of this project was to write two different algorithms to solve a maze.  The
+  theoretical performance of each algorithm was analyzed and compared.
+
+***Brute Force Algorithm***
+  The first algorithm that we implemented was a brute force algorithm.
+
+***Randomized Algorithm***
+  The second algorithm that we implemented was a randomized algorithm.  This algorithm moves
+  straight when it has two or four open directions to move, and it randomly picks a new
+  direction when it has one or three open directions to move.  The moves are all stored on
+  a stack, so that if the algorithm directly backtracks, like if it goes down a dead end
+  path, it pick back up where it's been.  All of the cookie crumbs are added to the maze
+  from the stack after it finds the solution.  The Random algorithm always
+  finds a solution, and for all of the sample graphs that we tested the have a solution, it
+  finds it pretty fast.  We were unable to analyze the actual timing for the random
+  algorithm because it solved all of the mazes so fast.  You can't really determine a bit O
+  for this algorithm either because it randomly choses which directions to go.  A larger
+  maze on average obviously takes longer than a smaller one, but you can't really put a
+  number to it.  The speed is also affected by the number of decision points in the maze.
+  The more decision points, the longer the algorithm takes, on average.  If a graph is very
+  large but has very few decision points, the algorithm doesn't take long at all.
+
+  ***Sample Output***
+zacharywalton@Zacharys-MacBook-Pro:~/cis263/project2$ ./mazeSolver
+Reading a 20 by 20 matrix.
+********************
+*******S    ********
+*****   ***     ****
+***   *      ** ****
+*     ******     ***
+* ******************
+*   ****************
+***    *********F***
+*    *     ***** ***
+*  ******* ***** ***
+**   ***** ***   ***
+**  ****** *** *****
+**     *** *** *****
+******       * *****
+*      ******* *****
+***  ***** ***   ***
+**** ***   ***** ***
+****      ****   ***
+*********      *****
+********************
+1.43814e+09  1.43814e+09
+
+Brute force distance: 87 units away!
+
+Brute force time: 0.000730991 ms
+
+********************
+*******Soooo********
+*****ooo***ooooo****
+***ooo*oooooo**o****
+*ooooo******oooo ***
+*o******************
+*ooo****************
+***oooo*********F***
+*    *ooooo*****o***
+*  *******o*****o***
+**   *****o***ooo***
+**  ******o***o*****
+**     ***o***o*****
+******ooooo  *o*****
+*   ooo*******o*****
+*** o***** ***ooo***
+****o***   *****o***
+****oooooo****ooo***
+*********oooooo*****
+********************
+Randomized distance: 200 units away!
+Randomized time: 0.000730991 ms
+
+********************
+*******S<<<^********
+*****<<>***v<<<>****
+***<>>*v>>>vv**^****
+*<<<<v******v>>> ***
+*v******************
+*v>>****************
+***<<  *********F***
+*^<vv*     *****^***
+*<v******* *****^***
+**v^ ***** ***<>>***
+**v>****** ***^*****
+** <>>^*** ***^*****
+******<      *^*****
+*   ^<>*******^*****
+*** v***** ***v<^***
+****v***^^ *****^***
+****v>>>vv****<>>***
+*********<>>>>v*****
+********************
